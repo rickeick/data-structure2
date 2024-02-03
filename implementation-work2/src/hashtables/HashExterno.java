@@ -30,6 +30,7 @@ public class HashExterno<K,V> extends TabelaHash<K,V> {
         }
         if (tabela[indice] == null) {
             tabela[indice] = new LinkedList<>();
+            tamanho++;
         }
         LinkedList<Entrada<K,V>> lista = tabela[indice];
         for (Entrada<K, V> entrada : lista) {
@@ -40,7 +41,6 @@ public class HashExterno<K,V> extends TabelaHash<K,V> {
         }
         lista.add(new Entrada<>(chave, valor));
         chaves.add(chave);
-        tamanho++;
     }
 
     @Override
@@ -64,8 +64,11 @@ public class HashExterno<K,V> extends TabelaHash<K,V> {
         if (lista != null) {
             for (Entrada<K, V> entrada : lista) {
                 if (entrada.chave.equals(chave)) {
-                    lista.remove(entrada);
                     chaves.remove(chave);
+                    lista.remove(entrada);
+                    if (lista.isEmpty()) {
+                        tamanho--;
+                    }
                     return entrada.valor;
                 }
             }

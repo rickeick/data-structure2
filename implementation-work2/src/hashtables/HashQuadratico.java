@@ -35,10 +35,11 @@ public class HashQuadratico<K,V> extends TabelaHash<K,V> {
                 break;
             }
             if (i >= capacidade-1) {
-                redimensionar(); i=0;
+                redimensionar(); i=1;
+                indice = hash(chave);
+            } else {
+                indice = (indice * i) % capacidade;
             }
-            indice = (indice * i) % capacidade;
-            i++;
         }
         tabela[indice] = new Entrada<>(chave, valor);
         chaves.add(chave);
@@ -47,26 +48,35 @@ public class HashQuadratico<K,V> extends TabelaHash<K,V> {
 
     @Override
     public V buscar(K chave) {
+        int inicio = hash(chave);
         int indice = hash(chave);
         for (int i=1; tabela[indice] != null; i++) {
-            if (tabela[indice].chave.equals(chave)) {
+            if (tabela[indice].chave.equals(chave) && tabela[indice].deletado != true) {
                 return tabela[indice].valor;
             }
             indice = (indice * i) % capacidade;
+            if (inicio == indice) {
+                break;
+            }
         }
         return null;
     }
 
     @Override
     public V remover(K chave) {
+        int inicio = hash(chave);
         int indice = hash(chave);
         for (int i=1; tabela[indice] != null; i++) {
-            if (tabela[indice].chave.equals(chave)) {
+            if (tabela[indice].chave.equals(chave) && tabela[indice].deletado != true) {
+                tamanho--;
                 chaves.remove(chave);
                 tabela[indice].deletado = true;
                 return tabela[indice].valor;
             }
             indice = (indice * i) % capacidade;
+            if (inicio == indice) {
+                break;
+            }
         }
         return null;
     }
@@ -80,7 +90,9 @@ public class HashQuadratico<K,V> extends TabelaHash<K,V> {
         chaves = new LinkedList<>();
         for (Entrada<K,V> entrada : antiga) {
             if (entrada != null) {
-                inserir(entrada.chave, entrada.valor);
+                if (entrada.deletado != true) {
+                    inserir(entrada.chave, entrada.valor);
+                }
             }
         }
     }

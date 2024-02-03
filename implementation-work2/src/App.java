@@ -25,8 +25,10 @@ public class App {
 
         inicio = System.currentTimeMillis();
         for (Arquivo arquivo : arquivos) {
-            String chave = arquivo.caminho;
-            tabelashash.get(hashtable).inserir(chave, arquivo);
+            if (arquivo != null) {
+                String chave = arquivo.caminho;
+                tabelashash.get(hashtable).inserir(chave, arquivo);
+            }
         }
         fim = System.currentTimeMillis();
         tempo1 = fim - inicio;
